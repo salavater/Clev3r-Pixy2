@@ -1,0 +1,487 @@
+'test commit
+#region Specifics:
+
+Function getVersion(in number port,in number adress, out number hardwareVersion, out number frimewareVersionMajor, out number frimewareVersionMinor, out number frimewareBuild, out number frimewareType)
+  
+  sendArraySize = 4'4
+  sendArray[0] = 174
+  sendArray[1] = 193
+  sendArray[2] = 14
+  sendArray[3] = 0
+  Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
+  
+  readArraySize = 13
+  readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
+  
+  If readArray[0] = 193 Then
+    shift = -1
+  Else
+    shift = 0
+  EndIf
+  
+  checkSum = readArray[4+shift] * 255 + readArray[5+shift]
+  hardwareVersion = readArray[6+shift] * 255 + readArray[7+shift]
+  frimewareVersionMajor = readArray[8+shift]
+  frimewareVersionMinor = readArray[9+shift]
+  frimewareBuild = readArray[9+shift] * 255 + readArray[10+shift]
+  frimewareType =  readArray[12+shift]
+  
+  #region print raw data
+  'LCD.Clear()
+  'For i = 0 To readArraySize-1
+  'LCD.Text(1,20,10+(i)*10,1,i + " " + readArray[i])
+  'EndFor
+  #endRegion
+  
+  #region print result data
+  'LCD.Clear()'print result data
+  'LCD.Text(1,90,20,1,"chS: " + checkSum)
+  'LCD.Text(1,90,30,1," hV: " + hardwareVersion)
+  'LCD.Text(1,90,40,1,"fMa: " + frimewareVersionMajor)
+  'LCD.Text(1,90,50,1,"fMi: " + frimewareVersionMinor)
+  'LCD.Text(1,90,60,1," fB: " + frimewareBuild)
+  'LCD.Text(1,90,70,1," fT: " + frimewareType)
+  #endRegion
+  
+  'Program.Delay(180)
+  
+EndFunction
+
+Function printVersion(in number port, in number adress)'not tested
+  Pixy2.getVersion(port, adress, hardwareVersion, frimewareVersionMajor, frimewareVersionMinor, frimewareBuild, frimewareType)
+  LCD.Clear()
+  LCD.Text(1,1,21,1,"v-version")
+  LCD.Text(1,1,31,1,"t-type")
+  LCD.Text(1,1,41,1,"------------------------")
+  
+  LCD.Text(1,1,51,1,"hardware v: " + frimewareType)
+  LCD.Text(1,1,61,1,"frimeWare v: " + frimewareVersionMajor + "." + frimewareVersionMinor + "." + frimewareBuild)
+  
+  If frimewareType = 103 Then
+    LCD.Text(1,1,71,1,"frimeWare t: " + "general")
+  Else
+    LCD.Text(1,1,71,1,"frimeWare t: " + frimewareType)
+  EndIf
+  
+EndFunction
+
+Function getResolution(in number port, in number adress, out number widthFrame, out number heightFrame)'отличается от документации
+  
+  sendArraySize = 5'4
+  sendArray[0] = 174
+  sendArray[1] = 193
+  sendArray[2] = 12
+  sendArray[3] = 1
+  Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
+  
+  readArraySize = 10
+  readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
+  
+  If readArray[0] = 193 Then
+    shift = 0
+  Else
+    shift = 1
+  EndIf
+  
+  checkSum = readArray[3+shift] + readArray[4+shift] * 255
+  widthFrame = readArray[5+shift] + readArray[6+shift] * 255
+  heightFrame = readArray[7+shift] + readArray[8+shift] * 255
+  
+  #region print raw data
+  'LCD.Clear()
+  'For i = 0 To readArraySize-1
+  'LCD.Text(1,20,10+(i)*10,1,i + " " + readArray[i])
+  'EndFor
+  #endRegion
+  
+  #region print result data
+  'LCD.Clear()'print result data
+  'LCD.Text(1,90,20,1,"chS: " + checkSum)
+  'LCD.Text(1,90,30,1,"  w: " + widthFrame)
+  'LCD.Text(1,90,40,1,"  h: " + heightFrame)
+  #endRegion
+  
+  'Program.Delay(180)
+EndFunction
+
+Function setLED(in number port, in number adress, in number R, in number G, in number B)
+  
+  sendArraySize = 7
+  sendArray[0] = 174
+  sendArray[1] = 193
+  sendArray[2] = 20
+  sendArray[3] = 3
+  sendArray[4] = R
+  sendArray[5] = G
+  sendArray[6] = B
+  
+  Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
+  
+  'readArraySize = 10
+  'readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
+  
+  'If readArray[0] = 193 Then
+  'shift = 0
+  'Else
+  'shift = 1
+  'EndIf
+  
+  'checkSum = readArray[3+shift] + readArray[4+shift] * 255
+  
+  #region print raw data
+  'LCD.Clear()
+  'For i = 0 To readArraySize-1
+  'LCD.Text(1,20,10+(i)*10,1,i + " " + readArray[i])
+  'EndFor
+  #endRegion
+  
+  #region print result data
+  
+  #endRegion
+  
+  'Program.Delay(180)
+  
+EndFunction
+
+Function setLamp(in number port, in number adress, in number upperLampStatus, in number lowerLampStatus) ' 0/1
+  
+  sendArraySize = 6
+  sendArray[0] = 174
+  sendArray[1] = 193
+  sendArray[2] = 22
+  sendArray[3] = 2
+  sendArray[4] = upperLampStatus
+  sendArray[5] = lowerLampStatus
+  
+  Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
+  
+  'readArraySize = 10
+  'readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
+  
+  'If readArray[0] = 193 Then
+  'shift = 0
+  'Else
+  'shift = 1
+  'EndIf
+  
+  'checkSum = readArray[3+shift] + readArray[4+shift] * 255
+  
+  #region print raw data
+  'LCD.Clear()
+  'For i = 0 To readArraySize-1
+  'LCD.Text(1,20,10+(i)*10,1,i + " " + readArray[i])
+  'EndFor
+  #endRegion
+  
+  #region print result data
+  
+  #endRegion
+  
+  'Program.Delay(180)
+  
+EndFunction
+
+Function getFPS(in number port, in number adress, out number fps)
+  
+  sendArraySize = 3
+  sendArray[0] = 174
+  sendArray[1] = 193
+  sendArray[2] = 24
+  
+  Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
+  
+  readArraySize = 10
+  readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
+  
+  If readArray[0] = 193 Then
+    shift = -1
+  Else
+    shift = 0
+  EndIf
+  
+  checkSum = readArray[4+shift] + readArray[5+shift] * 255
+  fps = readArray[6+shift]'return ***reading only 1 byte, pixy2 can return 4 byte number
+  
+  #region print raw data
+  'LCD.Clear()
+  'For i = 0 To readArraySize-1
+  'LCD.Text(1,20,10+(i)*10,1,i + " " + readArray[i])
+  'EndFor
+  #endRegion
+  
+  #region print result data
+  'LCD.Clear()'print result data
+  'LCD.Text(1,90,20,1,"chS: " + checkSum)
+  'LCD.Text(1,90,30,1,"fps: " + fps)
+  #endRegion
+  
+  'Program.Delay(180)
+  
+EndFunction
+#endRegion
+
+#region Color Connected Components - Packet Reference
+
+Function getFirstBlock(in number port, in number adress, out number colorCode, out number xCenter, out number yCenter, out number width, out number height, out number angle, out number trackingIndex, out number age)'+
+  
+  sendArraySize = 6
+  sendArray[0] = 174
+  sendArray[1] = 193
+  sendArray[2] = 32
+  sendArray[3] = 2
+  sendArray[4] = 1
+  sendArray[5] = 1
+  Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
+  
+  readArraySize = 20
+  readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
+  
+  If readArray[0] = 193 Then
+    shift = 0
+  Else
+    shift = 1
+  EndIf
+  
+  checkSum = readArray[3+shift] + readArray[4+shift] * 255
+  colorCode = readArray[5+shift] + readArray[6+shift] * 255
+  xCenter = readArray[7+shift] + readArray[8+shift] * 255
+  yCenter = readArray[9+shift] + readArray[10+shift] * 255
+  width = readArray[11+shift] + readArray[12+shift] * 255
+  height = readArray[13+shift] + readArray[14+shift] * 255
+  angle = readArray[15+shift] + readArray[16+shift] * 255
+  trackingIndex = readArray[17+shift]
+  age = readArray[18+shift]
+  
+  #region print raw data
+  'LCD.Clear()
+  'For i = 0 To 9
+  'LCD.Text(1,70,10+i*10,1,i + " " + readArray[i])
+  'EndFor
+  
+  'For i = 10 To readArraySize-1
+  'LCD.Text(1,120,10+(i-10)*10,1,i + " " + readArray[i])
+  'EndFor
+  #endRegion
+  
+  #region print result data
+  'LCD.Clear()'print result data
+  'LCD.Text(1,0,21,1,"chS " + checkSum)
+  'LCD.Text(1,0,31,1,"col " + colorCode)
+  'LCD.Text(1,0,41,1,"  x " + xCenter)
+  'LCD.Text(1,0,51,1,"  y " + yCenter)
+  'LCD.Text(1,0,61,1,"  w " + width)
+  'LCD.Text(1,0,71,1,"  h " + height)
+  'LCD.Text(1,0,81,1,"ang " + angle)
+  'LCD.Text(1,0,91,1,"ind " + trackingIndex)
+  'LCD.Text(1,0,101,1,"age " + age)
+  #endRegion
+  
+  'Program.Delay(180)
+  
+EndFunction
+
+Function getBlocks(in number port, in number adress, in number countOfBlocks, out number colorCode, out number xCenter, out number yCenter, out number width, out number height, out number angle, out number trackingIndex, out number age)'+
+  
+  sendArraySize = 6
+  sendArray[0] = 174
+  sendArray[1] = 193
+  sendArray[2] = 32
+  sendArray[3] = 2
+  sendArray[4] = 255
+  sendArray[5] = 255
+  Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
+  
+  readArraySize = 20
+  readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
+  
+  If readArray[0] = 193 Then
+    shift = 0
+  Else
+    shift = 1
+  EndIf
+  
+  checkSum = readArray[3+shift] + readArray[4+shift] * 255
+  colorCode = readArray[5+shift] + readArray[6+shift] * 255
+  xCenter = readArray[7+shift] + readArray[8+shift] * 255
+  yCenter = readArray[9+shift] + readArray[10+shift] * 255
+  width = readArray[11+shift] + readArray[12+shift] * 255
+  height = readArray[13+shift] + readArray[14+shift] * 255
+  angle = readArray[15+shift] + readArray[16+shift] * 255
+  trackingIndex = readArray[17+shift]
+  age = readArray[18+shift]
+  
+  #region print raw data
+  LCD.Clear()
+  For i = 0 To 9
+    LCD.Text(1,0,10+i*10,1,i + " " + readArray[i])
+  EndFor
+  
+  For i = 10 To 19
+    LCD.Text(1,60,10+(i-10)*10,1,i + " " + readArray[i])
+  EndFor
+    
+  For i = 10 To 19
+    LCD.Text(1,60,10+(i-10)*10,1,i + " " + readArray[i])
+  EndFor
+  #endRegion
+  
+  #region print result data
+  'LCD.Clear()'print result data
+  'LCD.Text(1,0,21,1,"chS " + checkSum)
+  'LCD.Text(1,0,31,1,"col " + colorCode)
+  'LCD.Text(1,0,41,1,"  x " + xCenter)
+  'LCD.Text(1,0,51,1,"  y " + yCenter)
+  'LCD.Text(1,0,61,1,"  w " + width)
+  'LCD.Text(1,0,71,1,"  h " + height)
+  'LCD.Text(1,0,81,1,"ang " + angle)
+  'LCD.Text(1,0,91,1,"ind " + trackingIndex)
+  'LCD.Text(1,0,101,1,"age " + age)
+  #endRegion
+  
+  Program.Delay(180)
+  
+EndFunction
+
+#endRegion
+
+#Region Line Tracking - Packet Reference
+
+Function getMainFeatures(in number port, in number adress, out number x0, out number y0, out number x1, out number y1, out number trackingIndex, out number flag) '*working only with main Vector. Not Barcode, no all features
+  
+  sendArraySize = 6
+  sendArray[0] = 174
+  sendArray[1] = 193
+  sendArray[2] = 48
+  sendArray[3] = 2
+  sendArray[4] = 0'can be 1
+  sendArray[5] = 7
+  Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
+  
+  readArraySize = 13'for vector
+  readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
+  
+  If readArray[0] = 193 Then
+    shift = 0
+  Else
+    shift = 1
+  EndIf
+  
+  checkSum = readArray[3+shift] + readArray[4+shift] * 255
+  x0 = readArray[7+shift]
+  y0 = readArray[8+shift]
+  x1 = readArray[9+shift]
+  y1 = readArray[10+shift]
+  trackingIndex = readArray[11+shift]
+  flag = readArray[12+shift]
+  
+  #region print raw data
+  'LCD.Clear()
+  'For i = 0 To 9
+  'LCD.Text(1,70,10+i*10,1,i + " " + readArray[i])
+  'EndFor
+  
+  'For i = 10 To readArraySize-1
+  'LCD.Text(1,120,10+(i-10)*10,1,i + " " + readArray[i])
+  'EndFor
+  #endRegion
+  
+  #region print result data
+  'LCD.Clear()'print result data
+  'LCD.Text(1,0,21,1,"chS " + checkSum)
+  'LCD.Text(1,0,31,1," x0 " + x0)
+  'LCD.Text(1,0,41,1," y0 " + y0)
+  'LCD.Text(1,0,51,1," x1 " + x1)
+  'LCD.Text(1,0,61,1," y1 " + y1)
+  'LCD.Text(1,0,71,1,"trI" + trackingIndex)
+  'LCD.Text(1,0,81,1,"flg " + flag)
+  #endRegion
+  
+  'Program.Delay(180)
+  
+EndFunction
+
+Function reverseVector(in number port, in number adress)
+  
+  sendArraySize = 4
+  sendArray[0] = 174
+  sendArray[1] = 193
+  sendArray[2] = 62
+  sendArray[3] = 0
+  Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
+  
+  'readArraySize = 10
+  'readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
+  
+  'If readArray[0] = 193 Then
+  'shift = 0
+  'Else
+  'shift = 1
+  'EndIf
+  
+  'checkSum = readArray[3+shift] + readArray[4+shift] * 255
+  
+  #region print raw data
+  'LCD.Clear()'print raw data
+  'For i = 0 To readArraySize-1
+  'LCD.Text(1,20,10+(i)*10,1,i + " " + readArray[i])
+  'EndFor
+  #endRegion
+  
+  #region print result data
+  
+  #endRegion
+  
+  'Program.Delay(180)
+EndFunction
+
+#endRegion
+
+#region Video - Packet Reference
+
+Function getRGB(in number port, in number adress, in number x, in number y, in number satureFlag, out number R, out number G, out number B)
+  sendArraySize = 9
+  sendArray[0] = 174
+  sendArray[1] = 193
+  sendArray[2] = 112
+  sendArray[3] = 5
+  sendArray[4] = Math.Remainder(x,255)
+  sendArray[5] = Math.Floor(x/255)
+  sendArray[6] = Math.Remainder(y,255)
+  sendArray[7] = Math.Floor(y/255)
+  sendArray[8] = 0
+  
+  Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
+  
+  readArraySize = 9
+  readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
+  
+  If readArray[0] = 193 Then
+    shift = 0
+  Else
+    shift = 1
+  EndIf
+  
+  checkSum = readArray[3+shift] + readArray[4+shift] * 255
+  R = readArray[7]
+  G = readArray[6]
+  B = readArray[5]
+  
+  #region print raw data
+  'LCD.Clear()'print raw data
+  'For i = 0 To readArraySize-1
+  'LCD.Text(1,20,10+(i)*10,1,i + " " + readArray[i])
+  'EndFor
+  
+  #region print result data
+  'LCD.Clear()'print result data
+  'LCD.Text(1,90,20,1,"chS: " + checkSum)
+  'LCD.Text(1,90,30,1,"  R: " + R)
+  'LCD.Text(1,90,40,1,"  G: " + G)
+  'LCD.Text(1,90,50,1,"  B: " + B)
+  #endRegion
+  
+  'Program.Delay(180)
+  
+EndFunction
+
+#endRegion
