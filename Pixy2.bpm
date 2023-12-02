@@ -280,7 +280,9 @@ Function getFirstBlock(in number port, in number adress, out number colorCode, o
   
 EndFunction
 
-Function getBlocks(in number port, in number adress, in number countOfBlocks, out number colorCode, out number xCenter, out number yCenter, out number width, out number height, out number angle, out number trackingIndex, out number age)'+
+Function getBlocks(in number port, in number adress, out number countOfBlocks,out number[] colorCode, out number[] xCenter, out number[] yCenter, out number[] width, out number[] height, out number[] angle, out number[] trackingIndex, out number[] age)'+
+  
+  objectSize = 14'count of bytes for one object
   
   sendArraySize = 6
   sendArray[0] = 174
@@ -291,7 +293,7 @@ Function getBlocks(in number port, in number adress, in number countOfBlocks, ou
   sendArray[5] = 255
   Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
   
-  readArraySize = 20
+  readArraySize = 5
   readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
   
   If readArray[0] = 193 Then
@@ -300,45 +302,72 @@ Function getBlocks(in number port, in number adress, in number countOfBlocks, ou
     shift = 1
   EndIf
   
+  checkSum = 0
+  For j = 0 To 255
+    colorCode[j] = 0
+    xCenter[j] = 0
+    yCenter[j] = 0
+    width[j] = 0
+    height[j] = 0
+    angle[j] = 0
+    trackingIndex[j] = 0
+    age[j] = 0
+  EndFor
+  
+  payload = readArray[2+shift]
   checkSum = readArray[3+shift] + readArray[4+shift] * 255
-  colorCode = readArray[5+shift] + readArray[6+shift] * 255
-  xCenter = readArray[7+shift] + readArray[8+shift] * 255
-  yCenter = readArray[9+shift] + readArray[10+shift] * 255
-  width = readArray[11+shift] + readArray[12+shift] * 255
-  height = readArray[13+shift] + readArray[14+shift] * 255
-  angle = readArray[15+shift] + readArray[16+shift] * 255
-  trackingIndex = readArray[17+shift]
-  age = readArray[18+shift]
+  countOfBlocks = payload/(objectSize) - 1
+  
+  'LCD.Text(1,100,20,1,countOfBlocks)
+  For i = 0 To countOfBlocks
+    readArraySize = objectSize
+    readArray = Sensor.ReadI2CRegisters(port, adress, 0, readArraySize)
+    
+    colorCode[i] = readArray[0+shift] + readArray[1+shift] * 255
+    xCenter[i] = readArray[2+shift] + readArray[3+shift] * 255
+    yCenter[i] = readArray[4+shift] + readArray[5+shift] * 255
+    width[i] = readArray[6+shift] + readArray[7+shift] * 255
+    height[i] = readArray[8+shift] + readArray[9+shift] * 255
+    angle[i] = readArray[10+shift] + readArray[11+shift] * 255
+    trackingIndex[i] = readArray[12+shift]
+    age[i] = readArray[13+shift]
+    
+  EndFor
   
   #region print raw data
-  LCD.Clear()
-  For i = 0 To 9
-    LCD.Text(1,0,10+i*10,1,i + " " + readArray[i])
-  EndFor
+  'LCD.Clear()
+  'For i = 0 To 9
+  'LCD.Text(1,0,10+i*10,1,i + " " + readArray[i])
+  'EndFor
   
-  For i = 10 To 19
-    LCD.Text(1,60,10+(i-10)*10,1,i + " " + readArray[i])
-  EndFor
-    
-  For i = 10 To 19
-    LCD.Text(1,60,10+(i-10)*10,1,i + " " + readArray[i])
-  EndFor
+  ' LCD.Text(1,45,20,1,payload)
+  'LCD.Text(1,90,30,1,countOfBlocks)'x pos was 45
+  'For i = 10 To 19
+  'LCD.Text(1,60,10+(i-10)*10,1,i + " " + readArray[i])
+  'EndFor
+  
+  'For i = 10 To readArraySize-1
+  'LCD.Text(1,120,10+(i-10)*10,1,i + " " + readArray[i])
+  'EndFor
   #endRegion
   
   #region print result data
-  'LCD.Clear()'print result data
-  'LCD.Text(1,0,21,1,"chS " + checkSum)
-  'LCD.Text(1,0,31,1,"col " + colorCode)
-  'LCD.Text(1,0,41,1,"  x " + xCenter)
-  'LCD.Text(1,0,51,1,"  y " + yCenter)
-  'LCD.Text(1,0,61,1,"  w " + width)
-  'LCD.Text(1,0,71,1,"  h " + height)
-  'LCD.Text(1,0,81,1,"ang " + angle)
-  'LCD.Text(1,0,91,1,"ind " + trackingIndex)
-  'LCD.Text(1,0,101,1,"age " + age)
+  'For j = 0 To 1
+  ''LCD.Clear()'print result data
+  'LCD.Text(1,j*80,11,1,"  j " + j)
+  'LCD.Text(1,j*80,21,1,"chS " + checkSum)
+  'LCD.Text(1,j*80,31,1,"col " + colorCode[j])
+  'LCD.Text(1,j*80,41,1,"  x " + xCenter[j])
+  'LCD.Text(1,j*80,51,1,"  y " + yCenter[j])
+  'LCD.Text(1,j*80,61,1,"  w " + width[j])
+  'LCD.Text(1,j*80,71,1,"  h " + height[j])
+  'LCD.Text(1,j*80,81,1,"ang " + angle[j])
+  'LCD.Text(1,j*80,91,1,"ind " + trackingIndex[j])
+  'LCD.Text(1,j*80,101,1,"age " + age[j])
+  'EndFor
   #endRegion
   
-  Program.Delay(180)
+  'Program.Delay(180)
   
 EndFunction
 
@@ -471,6 +500,7 @@ Function getRGB(in number port, in number adress, in number x, in number y, in n
   'For i = 0 To readArraySize-1
   'LCD.Text(1,20,10+(i)*10,1,i + " " + readArray[i])
   'EndFor
+  #endRegion
   
   #region print result data
   'LCD.Clear()'print result data
