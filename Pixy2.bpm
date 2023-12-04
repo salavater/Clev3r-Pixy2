@@ -302,18 +302,6 @@ Function getBlocks(in number port, in number adress, out number countOfBlocks,ou
     shift = 1
   EndIf
   
-  checkSum = 0
-  For j = 0 To 255
-    colorCode[j] = 0
-    xCenter[j] = 0
-    yCenter[j] = 0
-    width[j] = 0
-    height[j] = 0
-    angle[j] = 0
-    trackingIndex[j] = 0
-    age[j] = 0
-  EndFor
-  
   payload = readArray[2+shift]
   checkSum = readArray[3+shift] + readArray[4+shift] * 255
   countOfBlocks = payload/(objectSize) - 1
