@@ -1,0 +1,172 @@
+import "Pixy2"
+
+Program.Delay(100)
+
+#region functions for printing
+
+Function printPixel2x2(in number x, in number y, in number type)
+  
+  If type = 1 Then
+    LCD.Pixel(1,x,y+1)
+  EndIf
+  If type = 2 Then
+    LCD.Pixel(1,x,y+1)
+    LCD.Pixel(1,x+1,y)
+  EndIf
+  If type = 3 Then
+    LCD.Pixel(1,x,y)
+    LCD.Pixel(1,x+1,y)
+    LCD.Pixel(1,x+1,y+1)
+  EndIf
+  If type = 4 Then
+    LCD.Pixel(1,x,y)
+    LCD.Pixel(1,x+1,y)
+    LCD.Pixel(1,x,y+1)
+    LCD.Pixel(1,x+1,y+1)
+  EndIf
+  
+EndFunction
+
+Function lineForFile(in number type, in string lineIn, out string lineOut)
+  
+  If type = 0 Then
+    line = line + " "
+  EndIf
+  If type = 1 Then
+    line = line + "."
+  EndIf
+  If type = 2 Then
+    line = line + "l"
+  EndIf
+  If type = 3 Then
+    line = line + "W"
+  EndIf
+  If type = 4 Then
+    line = line + "@"
+  EndIf
+  
+EndFunction
+
+#endRegion
+
+#region print resolution
+Pixy2.getRGB(2,84,2,2,0,r,g,b)
+Pixy2.getResolution(2,84,weight,height)
+
+LCD.Clear()
+LCD.Text(1,40,20,1,"Resolution:")
+LCD.Text(1,40,30,1,"Weight: " + weight)
+LCD.Text(1,40,40,1,"Height: " + height)
+LCD.Text(1,20,60,1,"Resolution must ")
+LCD.Text(1,40,75,1,"be 315/208")
+LCD.Text(1,20,95,1,"Press any button")
+
+Buttons.Flush()
+Buttons.Wait()
+#endRegion
+
+'start program'
+@volume = 20
+
+#region taking photo
+
+Pixy2.setLamp(2,84,1,1)
+
+kx = 2
+ky = 2
+pic[0] = 0
+
+xResolution = 62'62
+yResolution = 41'41
+
+xShift = 32
+yShift = 23
+
+maxGray = 0
+minGray = 1
+
+LCD.Clear()
+LCD.Rect(1,xShift-2, yShift-2, xResolution*kx+4, yResolution*ky+4)
+
+For yStep = 0 To yResolution
+  For xStep = 0 To xResolution
+    
+    x = 2 + xStep * 5
+    y = 2 + yStep * 5
+    
+    Pixy2.getRGB(2,84,x,y,0,r,g,b)
+    
+    gray = (r+g+b)/765 ' value 0-1
+    pic[y*xResolution + x] = gray
+    
+    If gray > maxGray Then
+      maxGray = gray
+    EndIf
+    If gray < minGray Then
+      minGray = gray
+    EndIf
+    
+    l = maxGray - minGray
+    printPixel2x2(xShift + xStep*kx, yShift + yStep*ky, 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.5))
+    
+    Program.Delay(30)
+    
+  EndFor
+  Speaker.Tone(@volume,1200,100)
+EndFor
+
+Program.Delay(150)
+Speaker.Tone(@volume,1200,100)
+
+Buttons.Flush()
+Buttons.Wait()
+#endRegion
+
+#region reprint photo
+
+LCD.Clear()
+LCD.Rect(1,xShift-1, yShift-1, xResolution*kx+2, yResolution*ky+2)
+
+For yStep = 0 To yResolution
+  For xStep = 0 To xResolution
+    
+    x = 2 + xStep * 5
+    y = 2 + yStep * 5
+    
+    gray = pic[y*xResolution + x] ' value 0-1
+    
+    l = maxGray - minGray
+     printPixel2x2(xShift + xStep*kx, yShift + yStep*ky, 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.5))
+    
+    'Program.Delay(10)
+  EndFor
+EndFor
+
+Program.Delay(150)
+Speaker.Tone(@volume,1200,100)
+#endRegion
+
+#region save photo to txt file in char
+
+f = EV3File.OpenWrite("picture.txt")
+
+For yStep = 0 To yResolution
+  line = ""
+  For xStep = 0 To xResolution
+    
+    x = 2 + xStep * 5
+    y = 2 + yStep * 5
+    
+    gray = pic[y*xResolution+x] ' value 0-1
+    
+    l = maxGray - minGray
+   ' printPixel2x2(xShift + xStep*kx, yShift + yStep*ky, Math.Floor((l * 5) / ((gray - minGray) * 5)))
+    
+  EndFor
+EndFor
+
+EV3File.Close(f)
+#endRegion
+
+Buttons.Flush()
+Buttons.Wait()
