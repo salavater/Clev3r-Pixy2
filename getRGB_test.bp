@@ -30,19 +30,19 @@ EndFunction
 Function lineForFile(in number type, in string lineIn, out string lineOut)
   
   If type = 0 Then
-    line = line + " "
+    lineOut = lineIn + " "
   EndIf
   If type = 1 Then
-    line = line + "."
+    lineOut = lineIn + "."
   EndIf
   If type = 2 Then
-    line = line + "l"
+    lineOut = lineIn + ":"
   EndIf
   If type = 3 Then
-    line = line + "W"
+    lineOut = lineIn + "!"
   EndIf
   If type = 4 Then
-    line = line + "@"
+    lineOut = lineIn + "@"
   EndIf
   
 EndFunction
@@ -68,19 +68,22 @@ Buttons.Wait()
 'start program'
 @volume = 20
 
-#region taking photo
-
 Pixy2.setLamp(2,84,1,1)
 
 kx = 2
 ky = 2
 pic[0] = 0
+arrayR[0] = 0
+arrayG[0] = 0
+arrayB[0] = 0
 
 xResolution = 62'62
 yResolution = 41'41
 
 xShift = 32
 yShift = 23
+
+#region taking photo
 
 maxGray = 0
 minGray = 1
@@ -98,6 +101,9 @@ For yStep = 0 To yResolution
     
     gray = (r+g+b)/765 ' value 0-1
     pic[y*xResolution + x] = gray
+    arrayR[y*xResolution + x] = r
+    arrayG[y*xResolution + x] = g
+    arrayB[y*xResolution + x] = b
     
     If gray > maxGray Then
       maxGray = gray
@@ -106,8 +112,8 @@ For yStep = 0 To yResolution
       minGray = gray
     EndIf
     
-    l = maxGray - minGray
-    printPixel2x2(xShift + xStep*kx, yShift + yStep*ky, 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.5))
+    type = 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.5)
+    printPixel2x2(xShift + xStep*kx, yShift + yStep*ky, type)
     
     Program.Delay(30)
     
@@ -125,7 +131,7 @@ Buttons.Wait()
 #region reprint photo
 
 LCD.Clear()
-LCD.Rect(1,xShift-1, yShift-1, xResolution*kx+2, yResolution*ky+2)
+LCD.Rect(1,xShift-2, yShift-2, xResolution*kx+4, yResolution*ky+4)
 
 For yStep = 0 To yResolution
   For xStep = 0 To xResolution
@@ -135,8 +141,8 @@ For yStep = 0 To yResolution
     
     gray = pic[y*xResolution + x] ' value 0-1
     
-    l = maxGray - minGray
-     printPixel2x2(xShift + xStep*kx, yShift + yStep*ky, 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.5))
+    type = 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.5)
+    printPixel2x2(xShift + xStep*kx, yShift + yStep*ky, type)
     
     'Program.Delay(10)
   EndFor
@@ -146,12 +152,16 @@ Program.Delay(150)
 Speaker.Tone(@volume,1200,100)
 #endRegion
 
-#region save photo to txt file in char
+#region save photo to txt file in char and RGB file
 
-f = EV3File.OpenWrite("picture.txt")
+char_f = EV3File.OpenWrite("char_picture.txt")
+rgb_f = EV3File.OpenWrite("rgb.txt")
+
+EV3File.WriteLine(rgb_f,xResolution + " " + yResolution)
 
 For yStep = 0 To yResolution
-  line = ""
+  char_line = ""
+  rgb_line = ""
   For xStep = 0 To xResolution
     
     x = 2 + xStep * 5
@@ -159,14 +169,23 @@ For yStep = 0 To yResolution
     
     gray = pic[y*xResolution+x] ' value 0-1
     
-    l = maxGray - minGray
-   ' printPixel2x2(xShift + xStep*kx, yShift + yStep*ky, Math.Floor((l * 5) / ((gray - minGray) * 5)))
+    rgb_line = rgb_line + EV3File.ConvertToNumber(arrayR[y*xResolution+x]) + " " + EV3File.ConvertToNumber(arrayG[y*xResolution+x] )+ " " + EV3File.ConvertToNumber(arrayB[y*xResolution+x]) + " "
+    
+    type = 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.5)
+    lineForFile(type, char_line, char_line)
     
   EndFor
+  EV3File.WriteLine(char_f,char_line)
+  EV3File.WriteLine(rgb_f,rgb_line)
 EndFor
 
-EV3File.Close(f)
-#endRegion
+EV3File.Close(char_f)
+EV3File.Close(rgb_f)
+
+Program.Delay(150)
+Speaker.Tone(@volume,1200,100)
 
 Buttons.Flush()
 Buttons.Wait()
+
+#endRegion

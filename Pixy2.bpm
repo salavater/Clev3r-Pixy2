@@ -363,7 +363,7 @@ EndFunction
 
 #Region Line Tracking - Packet Reference
 
-Function getMainFeatures(in number port, in number adress, out number x0, out number y0, out number x1, out number y1, out number trackingIndex, out number flag) '*working only with main Vector. Not Barcode, no all features
+Function getMainFeature(in number port, in number adress, out number x0, out number y0, out number x1, out number y1, out number trackingIndex, out number flag) '*working only with main Vector. Not Barcode, no all features
   
   sendArraySize = 6
   sendArray[0] = 174
