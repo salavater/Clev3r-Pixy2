@@ -1,0 +1,70 @@
+import "Pixy2"
+Program.Delay(100)
+
+#region Functions for printing ogjects
+Function fillRect(in number x, in number y, in number w, in number h)
+  LCD.Rect(0,x-1,y-1,w+2,h+2)
+  LCD.FillRect(1,x,y,w,h)
+EndFunction
+
+Function fillRectWithRect(in number x, in number y, in number w, in number h)
+  LCD.Rect(0,x-1,y-1,w+2,h+2)
+  LCD.FillRect(1,x,y,w,h)
+  LCD.FillRect(0,x+w*0.1,y+h*0.1,w*0.8,h*0.8)
+EndFunction
+
+Function fillCircle(in number x, in number y, in number radius)
+  LCD.Circle(0,x,y,radius+2)
+  LCD.FillCircle(1,x,y,radius)
+EndFunction
+
+Function fillCircleWithCircle(in number x, in number y, in number radius)
+  LCD.Circle(0,x,y,radius+2)
+  LCD.FillCircle(1,x,y,radius)
+  LCD.FillCircle(0,x,y,radius*0.8)
+EndFunction
+#endRegion
+
+'start program'
+#region print resolution
+Pixy2.getBlocks(2,84,l,colorCode,x,y,w,h,angle,index,age)
+Pixy2.getResolution(2,84,weight,height)
+
+LCD.Clear()
+LCD.Text(1,40,20,1,"Resolution:")
+LCD.Text(1,40,30,1,"Weight: " + weight)
+LCD.Text(1,40,40,1,"Height: " + height)
+LCD.Text(1,20,60,1,"Resolution must ")
+LCD.Text(1,40,75,1,"be 315/207")
+LCD.Text(1,20,95,1,"Press any button")
+
+Buttons.Flush()
+Buttons.Wait()
+#endRegion
+
+kx = 178/315
+ky = 128/207
+
+While "True"
+  Pixy2.getBlocks(2,84,l,colorCode,x,y,w,h,angle,index,age)
+  
+  LCD.Clear()
+  
+  For i = 0 To l
+    
+    If colorCode[i] = 1 Then
+      fillCircle(x[i]*kx,y[i]*ky,((w[i]*kx) + h[i]*ky)/4)
+    EndIf
+    If colorCode[i] = 2 Then
+      fillRect((x[i]-w[i]/2)*kx, (y[i]-h[i]/2)*ky, w[i]*kx, h[i]*ky)
+    EndIf
+    If colorCode[i] = 3 Then
+      fillCircleWithCircle(x[i]*kx,y[i]*ky,((w[i]*kx) + h[i]*ky)/4)
+    EndIf
+    If colorCode[i] = 4 Then
+      fillRectWithRect((x[i]-w[i]/2)*kx, (y[i]-h[i]/2)*ky, w[i]*kx, h[i]*ky)
+    EndIf
+    
+  EndFor
+  ' Program.Delay(300)
+EndWhile
