@@ -44,8 +44,72 @@ Function lineForFile(in number type, in string lineIn, out string lineOut)
   If type = 4 Then
     lineOut = lineIn + "@"
   EndIf
+  If type = 5 Then
+    lineOut = lineIn + "r"
+  EndIf
+  If type = 6 Then
+    lineOut = lineIn + "("
+  EndIf
+  If type = 7 Then
+    lineOut = lineIn + "l"
+  EndIf
+  If type = 8 Then
+    lineOut = lineIn + "1"
+  EndIf
+  If type = 9 Then
+    lineOut = lineIn + "Z"
+  EndIf
+  If type = 10 Then
+    lineOut = lineIn + "4"
+  EndIf
+  If type = 11 Then
+    lineOut = lineIn + "H"
+  EndIf
+  If type = 12 Then
+    lineOut = lineIn + "9"
+  EndIf
+  If type = 13 Then
+    lineOut = lineIn + "W"
+  EndIf
+  If type = 14 Then
+    lineOut = lineIn + "8"
+  EndIf
+  If type = 15 Then
+    lineOut = lineIn + "$"
+  EndIf
+  If type = 16 Then
+    lineOut = lineIn + "@"
+  EndIf
   
 EndFunction
+
+Function progressBarStart(in number x, in number y)
+  
+  @prBarStartX = x
+  @prBarStartY = y
+  
+  LCD.Text(1, @prBarStartX + 10, @prBarStartY, 1, "Progress:")
+  LCD.Rect(1, @prBarStartX, @prBarStartY + 10, 100, 10)
+EndFunction
+
+Function progressBarUpdate(in number value, in number maxValue)
+  percent = value / maxValue
+  
+  'LCD.Text(1,1,1,1,value)
+  'LCD.Text(1,1,11,1,maxValue)
+  'LCD.Text(1,1,21,1,percent*100)
+  
+  LCD.Line(1,@prBarStartX + percent*100, @prBarStartY + 10, @prBarStartX + percent*100, @prBarStartY + 10 + 8)
+EndFunction
+
+Sub WB 'wait buttons ;)
+  Speaker.Tone(@volume,1200,100)
+  Program.Delay(150)
+  Speaker.Tone(@volume,1200,100)
+  
+  Buttons.Flush()
+  Buttons.Wait()
+EndSub
 
 #endRegion
 
@@ -81,15 +145,18 @@ xResolution = 62'62
 yResolution = 41'41
 
 xShift = 32
-yShift = 23
+yShift = 8
 
 #region taking photo
+Time.Reset1()
 
 maxGray = 0
 minGray = 1
 
 LCD.Clear()
 LCD.Rect(1,xShift-2, yShift-2, xResolution*kx+4, yResolution*ky+4)
+
+progressBarStart(42,100)
 
 For yStep = 0 To yResolution
   For xStep = 0 To xResolution
@@ -100,10 +167,13 @@ For yStep = 0 To yResolution
     Pixy2.getRGB(2,84,x,y,0,r,g,b)
     
     gray = (r+g+b)/765 ' value 0-1
-    pic[y*xResolution + x] = gray
-    arrayR[y*xResolution + x] = r
-    arrayG[y*xResolution + x] = g
-    arrayB[y*xResolution + x] = b
+    
+    i = yStep*xResolution+xStep
+    pic[i] = gray
+    
+    arrayR[i] = r
+    arrayG[i] = g
+    arrayB[i] = b
     
     If gray > maxGray Then
       maxGray = gray
@@ -112,8 +182,10 @@ For yStep = 0 To yResolution
       minGray = gray
     EndIf
     
-    type = 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.5)
+    type = 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.51)
     printPixel2x2(xShift + xStep*kx, yShift + yStep*ky, type)
+    
+    progressBarUpdate(i, yResolution*xResolution + xResolution)
     
     Program.Delay(30)
     
@@ -121,11 +193,8 @@ For yStep = 0 To yResolution
   Speaker.Tone(@volume,1200,100)
 EndFor
 
-Program.Delay(150)
-Speaker.Tone(@volume,1200,100)
-
-Buttons.Flush()
-Buttons.Wait()
+LCD.Text(1,1,1,6,Math.Round(Time.Get1()/1000))
+WB()
 #endRegion
 
 #region reprint photo
@@ -133,59 +202,81 @@ Buttons.Wait()
 LCD.Clear()
 LCD.Rect(1,xShift-2, yShift-2, xResolution*kx+4, yResolution*ky+4)
 
+progressBarStart(42,100)
+
 For yStep = 0 To yResolution
   For xStep = 0 To xResolution
     
-    x = 2 + xStep * 5
-    y = 2 + yStep * 5
+    i = yStep*xResolution+xStep
+    gray = pic[i] ' value 0-1
     
-    gray = pic[y*xResolution + x] ' value 0-1
-    
-    type = 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.5)
+    type = 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.51)
     printPixel2x2(xShift + xStep*kx, yShift + yStep*ky, type)
+    
+    progressBarUpdate(i, yResolution*xResolution + xResolution)
     
     'Program.Delay(10)
   EndFor
 EndFor
 
-Program.Delay(150)
-Speaker.Tone(@volume,1200,100)
+WB()
 #endRegion
 
-#region save photo to txt file in char and RGB file
+#region save photo to txt file in char
 
 char_f = EV3File.OpenWrite("char_picture.txt")
+
+LCD.Clear()
+LCD.Text(1,11,21,1,"Saving in char file")
+progressBarStart(42,40)
+
+For yStep = 0 To yResolution
+  char_line = ""
+  For xStep = 0 To xResolution
+    
+    i = yStep*xResolution+xStep
+    gray = pic[i] ' value 0-1
+    
+    type = 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.51)
+    lineForFile(type, char_line, char_line)
+    
+    progressBarUpdate(i, yResolution*xResolution + xResolution)
+    
+  EndFor
+  EV3File.WriteLine(char_f,char_line)
+EndFor
+
+EV3File.Close(char_f)
+WB()
+#endRegion
+
+#region save photo in rgb to txt file
+
+LCD.Clear()
+LCD.Text(1,11,21,1,"Saving in rgb file")
+progressBarStart(42,40)
+
 rgb_f = EV3File.OpenWrite("rgb.txt")
 
 EV3File.WriteLine(rgb_f,xResolution + " " + yResolution)
 
 For yStep = 0 To yResolution
-  char_line = ""
-  rgb_line = ""
+  
   For xStep = 0 To xResolution
     
-    x = 2 + xStep * 5
-    y = 2 + yStep * 5
+    i = yStep*xResolution+xStep
+    gray = pic[i] ' value 0-1
     
-    gray = pic[y*xResolution+x] ' value 0-1
+    rgb_line = EV3File.ConvertToNumber(arrayR[i]) + " " + EV3File.ConvertToNumber(arrayG[i] )+ " " + EV3File.ConvertToNumber(arrayB[i]) + " "
+    EV3File.WriteLine(rgb_f,rgb_line)
     
-    rgb_line = rgb_line + EV3File.ConvertToNumber(arrayR[y*xResolution+x]) + " " + EV3File.ConvertToNumber(arrayG[y*xResolution+x] )+ " " + EV3File.ConvertToNumber(arrayB[y*xResolution+x]) + " "
-    
-    type = 4 -  Math.Round((gray-minGray)/(maxGray - minGray) * 5 - 0.5)
-    lineForFile(type, char_line, char_line)
+    progressBarUpdate(i, yResolution*xResolution + xResolution)
     
   EndFor
-  EV3File.WriteLine(char_f,char_line)
-  EV3File.WriteLine(rgb_f,rgb_line)
 EndFor
 
-EV3File.Close(char_f)
 EV3File.Close(rgb_f)
 
-Program.Delay(150)
-Speaker.Tone(@volume,1200,100)
-
-Buttons.Flush()
-Buttons.Wait()
+WB()
 
 #endRegion
