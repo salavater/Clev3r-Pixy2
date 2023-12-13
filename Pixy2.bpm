@@ -222,7 +222,7 @@ EndFunction
 
 #region Color Connected Components - Packet Reference
 
-Function getFirstBlock(in number port, in number adress, out number colorCode, out number xCenter, out number yCenter, out number width, out number height, out number angle, out number trackingIndex, out number age)'+
+Function getMainBlock(in number port, in number adress, out number colorCode, out number xCenter, out number yCenter, out number width, out number height, out number angle, out number trackingIndex, out number age)'+
   
   sendArraySize = 6
   sendArray[0] = 174
