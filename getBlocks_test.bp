@@ -26,16 +26,20 @@ EndFunction
 #endRegion
 
 'start program'
+
+port = 2
+adress = 84
+
 #region print resolution
-Pixy2.getBlocks(2,84,l,colorCode,x,y,w,h,angle,index,age)
-Pixy2.getResolution(2,84,weight,height)
+Pixy2.getBlocks(port,adress,l,colorCode,x,y,w,h,angle,index,age)
+Pixy2.getResolution(port,adress,weight,height)
 
 LCD.Clear()
 LCD.Text(1,40,20,1,"Resolution:")
 LCD.Text(1,40,30,1,"Weight: " + weight)
 LCD.Text(1,40,40,1,"Height: " + height)
 LCD.Text(1,20,60,1,"Resolution must ")
-LCD.Text(1,40,75,1,"be 315/207")
+LCD.Text(1,40,75,1,"be 315/208")
 LCD.Text(1,20,95,1,"Press any button")
 
 Buttons.Flush()
@@ -43,10 +47,10 @@ Buttons.Wait()
 #endRegion
 
 kx = 178/315
-ky = 128/207
+ky = 128/208
 
 While "True"
-  Pixy2.getBlocks(2,84,l,colorCode,x,y,w,h,angle,index,age)
+  Pixy2.getBlocks(port,adress,l,colorCode,x,y,w,h,angle,index,age)
   
   LCD.Clear()
   

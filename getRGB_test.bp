@@ -113,9 +113,12 @@ EndSub
 
 #endRegion
 
+port = 2
+adress = 84
+
 #region print resolution
-Pixy2.getRGB(2,84,2,2,0,r,g,b)
-Pixy2.getResolution(2,84,weight,height)
+Pixy2.getRGB(port,adress,2,2,0,r,g,b)
+Pixy2.getResolution(port,adress,weight,height)
 
 LCD.Clear()
 LCD.Text(1,40,20,1,"Resolution:")
@@ -132,7 +135,7 @@ Buttons.Wait()
 'start program'
 @volume = 20
 
-Pixy2.setLamp(2,84,1,1)
+Pixy2.setLamp(port,adress,1,1)
 
 kx = 2
 ky = 2
@@ -164,7 +167,7 @@ For yStep = 0 To yResolution
     x = 2 + xStep * 5
     y = 2 + yStep * 5
     
-    Pixy2.getRGB(2,84,x,y,0,r,g,b)
+    Pixy2.getRGB(port,adress,x,y,0,r,g,b)
     
     gray = (r+g+b)/765 ' value 0-1
     

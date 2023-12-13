@@ -2,9 +2,12 @@ import "Pixy2"
 
 Program.Delay(100)
 
+port = 2
+adress = 84
+
 #region print resolution
-Pixy2.getMainFeature(2,84,x0,y0,x1,y1,trackingIndex,flag)
-Pixy2.getResolution(2,84,weight,height)
+Pixy2.getMainFeature(port,adress,x0,y0,x1,y1,trackingIndex,flag)
+Pixy2.getResolution(port,adress,weight,height)
 
 LCD.Clear()
 LCD.Text(1,40,20,1,"Resolution:")
@@ -25,10 +28,10 @@ While "True"
   
   click = Buttons.GetClicks() 
   if click = "E" Then 'reverce vector after pressing center button
-    Pixy2.reverseVector(2,84)
+    Pixy2.reverseVector(port,adress)
     EndIf
   
-  Pixy2.getMainFeature(2,84,x0,y0,x1,y1,trackingIndex,flag)
+  Pixy2.getMainFeature(port,adress,x0,y0,x1,y1,trackingIndex,flag)
   LCD.Clear()
   
   LCD.Line(1,x0*kx,y0*ky,x1*kx,y1*ky)
