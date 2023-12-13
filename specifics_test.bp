@@ -1,0 +1,103 @@
+import "Pixy2"
+
+port = 2
+adress = 84
+
+upLampFlag = 0
+downLampFlag = 0
+
+@volume = 20
+
+While "True"
+  
+  click = Buttons.GetClicks()
+  
+  LCD.Clear()
+  
+  LCD.Text(1,10,0,1,"press up button for")
+  LCD.Text(1,30,10,1,"switch up lamp")
+  
+  LCD.Text(1,0,25,1,"press down button for")
+  LCD.Text(1,30,35,1,"switch down lamp")
+  
+  LCD.Text(1,0,50,1,"press left button for")
+  LCD.Text(1,30,60,1,"RGB LED test")
+  
+  LCD.Text(1,0,75,1,"press right button for")
+  LCD.Text(1,30,85,1,"print version")
+  
+  LCD.Text(1,0,100,1,"press center button for")
+  LCD.Text(1,30,110,1,"get resolutions")
+  
+  Pixy2.getFPS(port, adress, fps)
+  LCD.Text(1,100,118,1,"fps: " + fps)
+  
+  If click = "U" Then
+    upLampFlag++
+    upLampFlag = Math.Remainder(upLampFlag,2)
+    Pixy2.setLamp(port, adress, upLampFlag, downLampFlag)
+  EndIf
+  
+  If click = "D" Then
+    downLampFlag++
+    downLampFlag = Math.Remainder(downLampFlag,2)
+    Pixy2.setLamp(port, adress, upLampFlag, downLampFlag)
+  EndIf
+  
+  If click = "L" Then
+    For r = 0 To 25
+      Pixy2.setLED(port, adress, r*10+5, 0 ,0)
+      Program.Delay(5)
+    EndFor
+    
+    For r = 0 To 25
+      Pixy2.setLED(port, adress, (25-r)*10+5, 0 ,0)
+      Program.Delay(5)
+    EndFor
+    Speaker.Tone(@volume,1200,50)
+    
+    For g = 0 To 25
+      Pixy2.setLED(port, adress, 0, g*10+5, 0)
+      Program.Delay(5)
+    EndFor
+    
+    For g = 0 To 25
+      Pixy2.setLED(port, adress, 0, (25-g)*10+5, 0)
+      Program.Delay(5)
+    EndFor
+    Speaker.Tone(@volume,1200,50)
+    
+    For b = 0 To 25
+      Pixy2.setLED(port, adress, 0, 0, b*10+5)
+      Program.Delay(5)
+    EndFor
+    
+    For b = 0 To 25
+      Pixy2.setLED(port, adress, 0, 0, (25-b)*10+5)
+      Program.Delay(5)
+    EndFor
+    Speaker.Tone(@volume,1200,50)
+    
+  EndIf
+  
+  If click = "R" Then
+    Pixy2.printVersion(port, adress)
+    Program.Delay(2000)
+    
+    Speaker.Tone(@volume,1200,50)
+  EndIf
+  
+  If click = "E" Then
+    Pixy2.getResolution(port, adress, w, h)
+    
+    LCD.Clear()
+    LCD.Text(1,20,20,1,"Width " + w)
+    LCD.Text(1,20,30,1,"Height " + h)
+    Program.Delay(2000)
+    
+    Speaker.Tone(@volume,1200,50)
+  EndIf
+  
+  Program.Delay(250)
+  
+EndWhile
