@@ -248,7 +248,7 @@ Function getMainBlock(in number port, in number adress, out number colorCode, ou
   yCenter = readArray[9+shift] + readArray[10+shift] * 255
   width = readArray[11+shift] + readArray[12+shift] * 255
   height = readArray[13+shift] + readArray[14+shift] * 255
-  angle = readArray[15+shift] + readArray[16+shift] * 255
+  angle = readArray[15+shift] - readArray[16+shift] * 255
   trackingIndex = readArray[17+shift]
   age = readArray[18+shift]
   
@@ -316,19 +316,19 @@ Function getBlocks(in number port, in number adress, out number countOfBlocks,ou
     yCenter[i] = readArray[4+shift] + readArray[5+shift] * 255
     width[i] = readArray[6+shift] + readArray[7+shift] * 255
     height[i] = readArray[8+shift] + readArray[9+shift] * 255
-    angle[i] = readArray[10+shift] + readArray[11+shift] * 255
+    angle[i] = readArray[10+shift] - readArray[11+shift]
     trackingIndex[i] = readArray[12+shift]
     age[i] = readArray[13+shift]
     
   EndFor
   
   #region print raw data
-  'LCD.Clear()
+  LCD.Clear()
   'For i = 0 To 9
   'LCD.Text(1,0,10+i*10,1,i + " " + readArray[i])
   'EndFor
   
-  ' LCD.Text(1,45,20,1,payload)
+  'LCD.Text(1,45,20,1,payload)
   'LCD.Text(1,90,30,1,countOfBlocks)'x pos was 45
   'For i = 10 To 19
   'LCD.Text(1,60,10+(i-10)*10,1,i + " " + readArray[i])
@@ -340,18 +340,18 @@ Function getBlocks(in number port, in number adress, out number countOfBlocks,ou
   #endRegion
   
   #region print result data
-  'For j = 0 To 1
-  ''LCD.Clear()'print result data
-  'LCD.Text(1,j*80,11,1,"  j " + j)
-  'LCD.Text(1,j*80,21,1,"chS " + checkSum)
-  'LCD.Text(1,j*80,31,1,"col " + colorCode[j])
-  'LCD.Text(1,j*80,41,1,"  x " + xCenter[j])
-  'LCD.Text(1,j*80,51,1,"  y " + yCenter[j])
-  'LCD.Text(1,j*80,61,1,"  w " + width[j])
-  'LCD.Text(1,j*80,71,1,"  h " + height[j])
-  'LCD.Text(1,j*80,81,1,"ang " + angle[j])
-  'LCD.Text(1,j*80,91,1,"ind " + trackingIndex[j])
-  'LCD.Text(1,j*80,101,1,"age " + age[j])
+  'For j = 0 To 0
+    ''LCD.Clear()'print result data
+    'LCD.Text(1,j*80,11,1,"  j " + j)
+    'LCD.Text(1,j*80,21,1,"chS " + checkSum)
+    'LCD.Text(1,j*80,31,1,"col " + colorCode[j])
+    'LCD.Text(1,j*80,41,1,"  x " + xCenter[j])
+    'LCD.Text(1,j*80,51,1,"  y " + yCenter[j])
+    'LCD.Text(1,j*80,61,1,"  w " + width[j])
+    'LCD.Text(1,j*80,71,1,"  h " + height[j])
+    'LCD.Text(1,j*80,81,1,"ang " + angle[j])
+    'LCD.Text(1,j*80,91,1,"ind " + trackingIndex[j])
+    'LCD.Text(1,j*80,101,1,"age " + age[j])
   'EndFor
   #endRegion
   
