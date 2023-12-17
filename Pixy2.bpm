@@ -340,22 +340,22 @@ Function getBlocks(in number port, in number adress, out number countOfBlocks,ou
   #endRegion
   
   #region print result data
-  'For j = 0 To 0
-    ''LCD.Clear()'print result data
-    'LCD.Text(1,j*80,11,1,"  j " + j)
-    'LCD.Text(1,j*80,21,1,"chS " + checkSum)
-    'LCD.Text(1,j*80,31,1,"col " + colorCode[j])
-    'LCD.Text(1,j*80,41,1,"  x " + xCenter[j])
-    'LCD.Text(1,j*80,51,1,"  y " + yCenter[j])
-    'LCD.Text(1,j*80,61,1,"  w " + width[j])
-    'LCD.Text(1,j*80,71,1,"  h " + height[j])
-    'LCD.Text(1,j*80,81,1,"ang " + angle[j])
-    'LCD.Text(1,j*80,91,1,"ind " + trackingIndex[j])
-    'LCD.Text(1,j*80,101,1,"age " + age[j])
-  'EndFor
+  For j = 0 To 0
+    'LCD.Clear()'print result data
+    LCD.Text(1,j*80,11,1,"  j " + j)
+    LCD.Text(1,j*80,21,1,"chS " + checkSum)
+    LCD.Text(1,j*80,31,1,"col " + colorCode[j])
+    LCD.Text(1,j*80,41,1,"  x " + xCenter[j])
+    LCD.Text(1,j*80,51,1,"  y " + yCenter[j])
+    LCD.Text(1,j*80,61,1,"  w " + width[j])
+    LCD.Text(1,j*80,71,1,"  h " + height[j])
+    LCD.Text(1,j*80,81,1,"ang " + angle[j])
+    LCD.Text(1,j*80,91,1,"ind " + trackingIndex[j])
+    LCD.Text(1,j*80,101,1,"age " + age[j])
+  EndFor
   #endRegion
   
-  'Program.Delay(180)
+  Program.Delay(180)
   
 EndFunction
 
@@ -465,7 +465,7 @@ Function getRGB(in number port, in number adress, in number x, in number y, in n
   sendArray[5] = Math.Floor(x/255)
   sendArray[6] = Math.Remainder(y,255)
   sendArray[7] = Math.Floor(y/255)
-  sendArray[8] = 0
+  sendArray[8] = satureFlag
   
   Sensor.WriteI2CRegisters(port, adress,0, sendArraySize, sendArray)
   
