@@ -30,7 +30,7 @@ green commands - already implemented and in the module
 red commands are commands that are described in the documentation (https://docs.pixycam.com/wiki/doku.php?id=wiki:v2:porting_guide ), but have not yet been added to the module
 
 
-
+!https://github.com/salavater/Clev3r-Pixy2/blob/main/1.png
 
 
 Specific - these are general commands, such as turning on the backlight, getting fps, etc.
