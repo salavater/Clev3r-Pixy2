@@ -24,7 +24,7 @@ I divided the commands for working with pixies (documentation) into 4 categories
 - Specifics
 - Color Connected Components
 - Line Tracking
--Video
+- Video
 
 green commands - already implemented and in the module
 red commands are commands that are described in the documentation (https://docs.pixycam.com/wiki/doku.php?id=wiki:v2:porting_guide ), but have not yet been added to the module
