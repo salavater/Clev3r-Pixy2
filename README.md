@@ -33,7 +33,7 @@ red commands are commands that are described in the documentation (https://docs.
 ![main](https://github.com/salavater/Clev3r-Pixy2/blob/main/1.png)
 
 
-Specific - these are general commands, such as turning on the backlight, getting fps, etc.
+**Specific (bold)** - these are general commands, such as turning on the backlight, getting fps, etc.
 
 getVersion() - this command returns information about the current camera firmware
 The command has 2 input parameters: camera port, I2C camera address.
