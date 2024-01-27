@@ -1,4 +1,4 @@
-Eng:
+# Eng:
 
 
 Pixy 2 is a camera with a built-in processor that can process images and provide ready-made information about the image.
@@ -114,4 +114,4 @@ Returns 3 parameters: RGB of the specified area
 An “area” is a collection of 25 pixels.
 If the saturation input parameter is 0, then the RGB values will be “raw”. If the input parameter “saturation” is equal to 1, then the largest value among RGB will be equal to 255, the rest will be stretched in proportion to the maximum
 
-
+# Рус:
