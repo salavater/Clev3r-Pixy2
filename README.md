@@ -21,9 +21,13 @@ You can see how test programs work here: *link to video*
 If you move the “_internal” folder, the “rgbToPNG.exe” application, the text file “rgb.txt” into one folder (this file must be downloaded from the ev3 unit after running the “getRGB_test.bp” program, an image in RGB format is written to this file) and run “rgbToPNG.exe”, the application will create a PNG image in this folder
 
 **I divided the commands for working with pixies (documentation) into 4 categories:**
+
 **- Specifics**
+
 **- Color Connected Components**
+
 **- Line Tracking**
+
 **- Video**
 
 green commands - already implemented and in the module
