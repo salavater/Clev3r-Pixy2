@@ -31,6 +31,7 @@ If you move the “_internal” folder, the “rgbToPNG.exe” application, the 
 **- Video**
 
 green commands - already implemented and in the module
+
 red commands are commands that are described in the documentation (https://docs.pixycam.com/wiki/doku.php?id=wiki:v2:porting_guide ), but have not yet been added to the module
 
 
@@ -149,6 +150,7 @@ If the saturation input parameter is 0, then the RGB values will be “raw”. I
 - Video
 
 зеленые команды - уже реализованы и есть в модуле
+
 красные команды - это команды которые описаны в документации( https://docs.pixycam.com/wiki/doku.php?id=wiki:v2:porting_guide ), но еще не добавлены в модуль
 
 
