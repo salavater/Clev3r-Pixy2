@@ -17,7 +17,7 @@ Repository contents:
 “getRGB_test.bp” - a program that gets the rgb of “each” pixel (takes a photo)
 “_internal/ and rgbToPNG.exe” - a program for saving an image in png format based on the results of “getRGB_test.bp”
 
-You can see how test programs work here: *link to video*
+You can see how test programs work here: [*link to video*](https://www.youtube.com/watch?v=GoYYRl5KZRw&ab_channel=SalavatYakupov)
 If you move the “_internal” folder, the “rgbToPNG.exe” application, the text file “rgb.txt” into one folder (this file must be downloaded from the ev3 unit after running the “getRGB_test.bp” program, an image in RGB format is written to this file) and run “rgbToPNG.exe”, the application will create a PNG image in this folder
 
 **I divided the commands for working with pixies (documentation) into 4 categories:**
@@ -140,7 +140,7 @@ If the saturation input parameter is 0, then the RGB values will be “raw”. I
 “getRGB_test.bp” - программа получающая rgb “каждого” пикселя (делает фотографию)
 “_internal/ and rgbToPNG.exe” - программа для сохранения картинки в формате png по результатам работы “getRGB_test.bp”
 
-Посмотреть как работают тестовые программы можно здесь: *ссылка на видео*
+Посмотреть как работают тестовые программы можно здесь: [*ссылка на видео*](https://www.youtube.com/watch?v=GoYYRl5KZRw&ab_channel=SalavatYakupov)
 Если в одну папку переместить папку “_internal”, приложение “rgbToPNG.exe”, текстовый файл “rgb.txt”(этот файл нужно скачать с блока ev3 после выполнения программы “getRGB_test.bp” , в этот файл записывается картинка в формате RGB) и запустить “rgbToPNG.exe”, приложение создаст в этой папке картинку в формате PNG 
 
 Команды для работы с пикси я(документация) разделил на 4 категории:
