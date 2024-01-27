@@ -1,6 +1,6 @@
 # Eng:
 
-
+## Main information:
 Pixy 2 is a camera with a built-in processor that can process images and provide ready-made information about the image.
 Pixy official website: https://pixycam.com/pixy2/ 
 Pixycam 2 documentation: https://docs.pixycam.com/wiki/doku.php?id=wiki:v2:start 
@@ -37,6 +37,8 @@ red commands are commands that are described in the documentation (https://docs.
 ![main](https://github.com/salavater/Clev3r-Pixy2/blob/main/1.png)
 
 
+## Specifics:
+
 **Specific** these are general commands, such as turning on the backlight, getting fps, etc.
 
 **getVersion()** - this command returns information about the current camera firmware
@@ -67,6 +69,8 @@ Upper LEDs (0-1), status of the lower LED (0-1).
 The command has 2 input parameters: camera port, I2C camera address.
 Returns 1 parameter: the current number of frames per second.
 
+## Color Connected Components:
+
 **Color Connected Components** are commands that allow you to track specified objects. Objects are set through the PixyMon2 application (https://pixycam.com/downloads-pixy2/ )
 
 **getMainBlock()** - This command returns information about the largest object being tracked.
@@ -82,6 +86,7 @@ If the tracked object is a color code, then instead of the object number there w
 The command has 2 input parameters: camera port, I2C camera address.
 Returns 9 parameters (1 numeric value and 8 numeric arrays): the number of objects in the frame (numeric value, subsequent arrays), object number, object center along the X axis, object center along the Y axis, object width, object height, angle, identification number, the number of frames during which the object is in the field of view (0-255).
 
+## Line tracking:
 
 **Line Tracking** are commands that allow you to track straight lines (for example, to follow a line).
 **getMainFeature()** - This command returns information about a vector, a vector is a line between two points. A vector is the main (largest) straight line in the frame.
@@ -105,6 +110,7 @@ A flag is unique information about a vector, for example, if the vector is adjac
 **reverseVector()** - this command “reverses” the direction of the vector (switches the starting and ending points).
 The command has 2 input parameters: camera port, I2C camera address.
 
+## Video:
 
 **Video** are commands that allow you to obtain information about a picture in the RGB format of each pixel
 **getRGB()** - This command returns the RGB values of a specified area in a frame.
@@ -115,3 +121,112 @@ An “area” is a collection of 25 pixels.
 If the saturation input parameter is 0, then the RGB values will be “raw”. If the input parameter “saturation” is equal to 1, then the largest value among RGB will be equal to 255, the rest will be stretched in proportion to the maximum
 
 # Рус:
+
+Пикси2 это камера с встроенным процессором умеющей обрабатывать изображение и выдавать готовую информацию о картинке. 
+Официальный сайт пикси: https://pixycam.com/pixy2/
+Документация пикси 2: https://docs.pixycam.com/wiki/doku.php?id=wiki:v2:start
+
+Для корректной работы камеры с ev3 нужно установить pixyMon v2 (https://pixycam.com/downloads-pixy2/ ), установить “general frameware”, и в настройках в меню “интерфейс” выбрать режим I2C(не lego I2C!!!)
+
+В этом репозитории есть модуль для работы ev3 с камерой пикси 2 на клевере. А также тестовые программы для проверки функционала камеры.
+
+Содержание репозитория:
+“Pixy2.bpm” - основной модуль
+“getBlocks_test.bp” - программа отслеживающая заданные цветные объекты
+“specifics_test.bp” - программа для проверки базовых функций камеры
+“getMainFeature_test.bp” - программа отслеживающая прямые (например линию)
+“getRGB_test.bp” - программа получающая rgb “каждого” пикселя (делает фотографию)
+“_internal/ and rgbToPNG.exe” - программа для сохранения картинки в формате png по результатам работы “getRGB_test.bp”
+
+Посмотреть как работают тестовые программы можно здесь: *ссылка на видео*
+Если в одну папку переместить папку “_internal”, приложение “rgbToPNG.exe”, текстовый файл “rgb.txt”(этот файл нужно скачать с блока ev3 после выполнения программы “getRGB_test.bp” , в этот файл записывается картинка в формате RGB) и запустить “rgbToPNG.exe”, приложение создаст в этой папке картинку в формате PNG 
+
+Команды для работы с пикси я(документация) разделил на 4 категории:
+- Specifics 
+- Color Connected Components
+- Line Tracking
+- Video
+
+зеленые команды - уже реализованы и есть в модуле
+красные команды - это команды которые описаны в документации( https://docs.pixycam.com/wiki/doku.php?id=wiki:v2:porting_guide ), но еще не добавлены в модуль
+
+
+![main](https://github.com/salavater/Clev3r-Pixy2/blob/main/1.png)
+
+
+Specific - это общие команды, по типу включения выключения подсветки, получения fps и т д
+
+getVersion() - эта команда возвращает информацию о текущей прошивке камеры
+Команда имеет 2 входных параметра: порт камеры, I2C адрес камеры.
+Возвращает 5 выходных параметра о текущей версии прошивки.
+
+printVersion() - эта команда печатает информацию о прошивке камеры в удобном виде на экране блока.
+Команда имеет 2 входных параметра: порт камеры, I2C адрес камеры.
+
+getResolution() - эта команда возвращает разрешение камеры.
+Команда имеет 2 входных параметра: порт камеры, I2C адрес камеры.
+Возвращает 2 параметра: количество пикселей по ширине и количество пикселей по высоте.
+
+setCameraBrightness() - эта команда не реализована(
+
+setServos() - эта команда не реализована(
+
+setLED() - эта команда зажигает RGB светодиод по заданным компонентам RGB компонентам.
+Команда имеет 5 входных параметров: порт камеры, I2C адрес камеры, компонент R, компонент G, компонент B.
+
+setLamp() - эта команда включает и выключает верхние и нижний светодиод.
+Команда имеет 4 входных параметра: порт камеры, I2C адрес камеры, состояние.
+Верхних светодиодов(0-1), состояние нижнего светодиода(0-1).
+0 - выключено
+1 - включено
+
+getFPS() - эта команда возвращает текущую частоту обновления кадров в секунду камеры. Внимание!!! ev3 может принять значительно меньшее количество кадров в секунду, из-за маленькой скорости передачи информации шины I2C
+Команда имеет 2 входных параметра: порт камеры, I2C адрес камеры.
+Возвращает 1 параметр: текущее количество кадров в секунду.
+
+Color Connected Components - это команды позволяющие отслеживать заданные объекты. Объекты задаются через приложение PixyMon2(https://pixycam.com/downloads-pixy2/)
+
+getMainBlock() - это команда возвращает информацию о самом большом отслеживаемом объекте.
+Команда имеет 2 входных параметра: порт камеры, I2C адрес камеры.
+Возвращает 8 параметров: номер объекта, центр объекта по оси X, центр объекта по оси Y, ширина объекта, высота объекта,  угол, идентификационный номер, количество кадров в течении которых объект находится в поле зрения(0-255).
+
+Для каждого нового объекта в кадре камера даёт свой уникальный идентификационный номер. Если убрать объект из кадра и заново переместить в кадр, идентификационный номер будет отличаться.
+
+Для обычных объектов угол будет всегда равен 0. Для цветовых кодов, угол это степень наклонения кода(-180/180).
+Если отслеживаемый объект это цветовой код, тогда вместо номера объекта будет цветовой код(пока работает не корректно).
+
+getBlocks() - эта команда возвращает информацию о всех отслеживаемых объектах. Обратите внимание, что эта команда возвращает информацию об объектах в виде массивов, где отсчёт начинается с 0 индекса. Объекты в массиве отсортированы в порядке убывания, то есть в 0 элементе массива будет информация о самом большом объекте и т.д.
+Команда имеет 2 входных параметра: порт камеры, I2C адрес камеры.
+Возвращает 9 параметров(1 числовое значение и 8 числовых массива): количество объектов в кадре(числовое значение, последующие - массивы), номер объекта, центр объекта по оси X, центр объекта по оси Y, ширина объекта, высота объекта,  угол, идентификационный номер, количество кадров в течении которых объект находится в поле зрения(0-255).
+
+
+Line Tracking - это команды позволяющие отслеживать прямые(например для следования по линии).
+getMainFeature() - эта команда возвращает информацию о векторе, вектор представляет собой линию, между двумя точками. Вектор это главная(самая большая) прямая линия в кадре.
+Команда имеет 2 входных параметра: порт камеры, I2C адрес камеры.
+Возвращает 6 параметров: координату по оси x для начальной точки,
+координату по оси y для начальной точки, координату по оси x для конечной точки, координату по оси y для конечной точки, идентификационный номер, флаг
+
+Для каждого нового объекта в кадре камера даёт свой уникальный идентификационный номер. Если убрать объект из кадра и заново переместить в кадр, идентификационный номер будет отличаться.
+Флаг - это уникальная информация о векторе, например если вектор прилегает к перекрестку, тогда флаг будет равен 4, иначе равен 0.
+
+getAllFeatures() - эта команда не реализована(
+
+setMode() - эта команда не реализована(
+
+setNextTurn() - эта команда не реализована(
+
+setDefaultTurn() - эта команда не реализована(
+
+setVector() - эта команда не реализована(
+
+reverseVector() - эта команда “разворачивает” направление вектора(меняет начальную и конечную точку местами).
+Команда имеет 2 входных параметра: порт камеры, I2C адрес камеры.
+
+
+Video - это команды позволяющие получать информацию о картинке, в формате RGB каждого пикселя
+getRGB() - эта команда возвращает значения RGB указанной области в кадре.
+Команда имеет 5 входных параметров: порт камеры, I2C адрес камеры, координату x центра области, координату y центра области, насыщенность(0-1).
+Возвращает 3 параметра: RGB указанной области
+
+“Область” - это совокупность 25 пикселей.
+Если входной параметр “насыщенность” будет равен 0, тогда значения RGB будут “сырыми”. Если входной параметр “насыщенность” будет равен 1, тогда наибольшее значение среди RGB будет равен 255, остальные растянутся пропорционально максимальному 
